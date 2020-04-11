@@ -16,18 +16,18 @@ class Main extends PluginBase implements Listener {
 
 	/** @var int */
 	private $mode;
-	/** @var array  */
+	/** @var array */
 	private $commandList = [];
 
 	public function onEnable() {
 		$this->saveDefaultConfig();
 
-		switch($this->getConfig()->get("mode")) {
+		switch ($this->getConfig()->get("mode")) {
 			case "whitelist":
-				$this->mode	= self::MODE_WHITELIST;
+				$this->mode = self::MODE_WHITELIST;
 				break;
 			case "blacklist":
-				$this->mode	= self::MODE_BLACKLIST;
+				$this->mode = self::MODE_BLACKLIST;
 				break;
 			default:
 				$this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...');
