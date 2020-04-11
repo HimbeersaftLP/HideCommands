@@ -1,0 +1,14 @@
+---
+# HideCommands config file:
+
+# Mode can be either "blacklist" or "whitelist"
+# whitelist mode will only show the commands specified below and hide all others
+# blacklist mode will hide the commands specified below and show all others
+mode: "whitelist"
+
+# List of commands to whitelist/blacklist (depending on the mode set above)
+commands:
+  - "op"
+  - "gamemode"
+  - "version"
+...
