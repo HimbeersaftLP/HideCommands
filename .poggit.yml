@@ -1,5 +1,4 @@
----
-# Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/HimbeersaftLP/HideCommands
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/HimbeersaftLP/HideCommands
 build-by-default: true
 branches:
 - master
