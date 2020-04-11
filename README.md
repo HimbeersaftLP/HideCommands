@@ -1,6 +1,6 @@
 # HideCommands
-[![Poggit-Ci](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/HideCommands/HideCommands)](https://poggit.pmmp.io/ci/HimbeersaftLP/HideCommands/HideCommands)
-[![](https://poggit.pmmp.io/shield.state/HideCommands)](https://poggit.pmmp.io/p/HideCommands)
+[![Poggit CI Status](https://poggit.pmmp.io/ci.shield/HimbeersaftLP/HideCommands/HideCommands)](https://poggit.pmmp.io/ci/HimbeersaftLP/HideCommands/HideCommands)
+[![Poggit Release Status](https://poggit.pmmp.io/shield.state/HideCommands)](https://poggit.pmmp.io/p/HideCommands)
 
 Remove specific commands from the in-game command suggestions.
 
