@@ -1,6 +1,6 @@
 ---
 name: HideCommands
-version: 1.0.0
+version: 1.0.1
 main: Himbeer\HideCommands\Main
 api: 3.5.12
 mcpe-protocol:
