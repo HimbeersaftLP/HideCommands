@@ -46,6 +46,7 @@ class Main extends PluginBase implements Listener {
 	public function onDataPacketSend(DataPacketSendEvent $event) {
 		$packet = $event->getPacket();
 		if ($packet instanceof AvailableCommandsPacket) {
+			if ($event->getPlayer()->hasPermission("hidecommands.unhide")) return;
 			if ($this->mode === self::MODE_WHITELIST) {
 				$packet->commandData = array_intersect_key($packet->commandData, $this->commandList);
 			} else {
