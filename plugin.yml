@@ -1,6 +1,6 @@
 ---
 name: HideCommands
-version: 1.0.5
+version: 1.0.6
 main: Himbeer\HideCommands\Main
 api: 3.5.12
 mcpe-protocol:
@@ -10,6 +10,7 @@ mcpe-protocol:
   - 408
   - 419
   - 422
+  - 428
 author: Himbeer
 website: himbeer.me
 description: Remove specific commands from the in-game command suggestions.
