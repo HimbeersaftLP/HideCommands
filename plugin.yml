@@ -10,6 +10,7 @@ mcpe-protocol:
   - 408
   - 419
   - 422
+  - 428
 author: Himbeer
 website: himbeer.me
 description: Remove specific commands from the in-game command suggestions.
