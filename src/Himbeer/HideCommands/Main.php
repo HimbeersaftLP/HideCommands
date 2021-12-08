@@ -19,7 +19,7 @@ class Main extends PluginBase implements Listener {
 	/** @var array */
 	private $commandList = [];
 
-	public function onEnable() {
+	public function onEnable(): void {
 		$this->saveDefaultConfig();
 
 		switch ($this->getConfig()->get("mode")) {
@@ -31,7 +31,6 @@ class Main extends PluginBase implements Listener {
 				break;
 			default:
 				$this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...');
-				$this->setEnabled(false);
 				return;
 		}
 
@@ -44,13 +43,20 @@ class Main extends PluginBase implements Listener {
 	}
 
 	public function onDataPacketSend(DataPacketSendEvent $event) {
-		$packet = $event->getPacket();
-		if ($packet instanceof AvailableCommandsPacket) {
-			if ($event->getPlayer()->hasPermission("hidecommands.unhide")) return;
-			if ($this->mode === self::MODE_WHITELIST) {
-				$packet->commandData = array_intersect_key($packet->commandData, $this->commandList);
-			} else {
-				$packet->commandData = array_diff_key($packet->commandData, $this->commandList);
+		$packets = $event->getPackets();
+		foreach ($packets as $packet) {
+			if ($packet instanceof AvailableCommandsPacket) {
+				$targets = $event->getTargets();
+				foreach ($targets as $target) {
+					if ($target->getPlayer() !== null){
+						if($target->getPlayer()->hasPermission("hidecommands.unhide")) return;
+						if($this->mode === self::MODE_WHITELIST){
+							$packet->commandData = array_intersect_key($packet->commandData, $this->commandList);
+						}else{
+							$packet->commandData = array_diff_key($packet->commandData, $this->commandList);
+						}
+					}
+				}
 			}
 		}
 	}
