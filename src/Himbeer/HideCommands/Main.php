@@ -22,17 +22,11 @@ class Main extends PluginBase implements Listener {
 	public function onEnable(): void {
 		$this->saveDefaultConfig();
 
-		switch ($this->getConfig()->get("mode", "whitelist")) {
-			case "whitelist":
-				$this->mode = self::MODE_WHITELIST;
-				break;
-			case "blacklist":
-				$this->mode = self::MODE_BLACKLIST;
-				break;
-			default:
-				$this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...');
-				return;
-		}
+		match ($this->getConfig()->get("mode", "whitelist")) {
+			"whitelist" => $this->mode = self::MODE_WHITELIST,
+			"blacklist" => $this->mode = self::MODE_BLACKLIST,
+			default => $this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...')
+		};
 
 		foreach ($this->getConfig()->get("commands", ["op", "gamemode", "version"]) as $command) {
 			// We put the command name in the key so we can use array_intersect_key and array_diff_key
