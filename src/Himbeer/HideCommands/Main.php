@@ -22,7 +22,7 @@ class Main extends PluginBase implements Listener {
 	public function onEnable(): void {
 		$this->saveDefaultConfig();
 
-		switch ($this->getConfig()->get("mode")) {
+		switch ($this->getConfig()->get("mode", "whitelist")) {
 			case "whitelist":
 				$this->mode = self::MODE_WHITELIST;
 				break;
@@ -34,7 +34,7 @@ class Main extends PluginBase implements Listener {
 				return;
 		}
 
-		foreach ($this->getConfig()->get("commands") as $command) {
+		foreach ($this->getConfig()->get("commands", ["op", "gamemode", "version"]) as $command) {
 			// We put the command name in the key so we can use array_intersect_key and array_diff_key
 			$this->commandList[strtolower($command)] = null;
 		}
