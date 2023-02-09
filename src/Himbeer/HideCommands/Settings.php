@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Himbeer\HideCommands;
 
-use Exception;
 use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
-
-class InvalidModeException extends Exception {
-}
 
 class Settings {
 	private const MODE_WHITELIST = 0;
@@ -16,9 +12,12 @@ class Settings {
 
 	/** @var int Either MODE_WHITELIST or MODE_BLACKLIST */
 	public int $mode;
-	/** @var string[] List of commands that are hidden/shown */
+	/** @var array List of commands that are hidden/shown, the commands are the array keys, all values are null */
 	public array $commandList = [];
 
+	/**
+	 * @throws InvalidModeException
+	 */
 	public function __construct(array $configData) {
 		switch ($configData["mode"]) {
 			case "whitelist":
@@ -37,7 +36,7 @@ class Settings {
 		}
 	}
 
-	public function applyToAvailableCommandsPacket(AvailableCommandsPacket $packet) {
+	public function applyToAvailableCommandsPacket(AvailableCommandsPacket $packet) : void {
 		if ($this->mode === self::MODE_WHITELIST) {
 			$packet->commandData = array_intersect_key($packet->commandData, $this->commandList);
 		} else {
