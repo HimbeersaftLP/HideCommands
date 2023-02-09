@@ -42,6 +42,9 @@ class Main extends PluginBase implements Listener {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 	}
 
+	/**
+	 * @priority HIGHEST
+	 */
 	public function onDataPacketSend(DataPacketSendEvent $event) {
 		$packets = $event->getPackets();
 		foreach ($packets as $packet) {
