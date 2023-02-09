@@ -5,62 +5,95 @@ declare(strict_types=1);
 namespace Himbeer\HideCommands;
 
 use pocketmine\event\Listener;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
+use pocketmine\plugin\DisablePluginException;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 class Main extends PluginBase implements Listener {
 
-	private const MODE_WHITELIST = 0;
-	private const MODE_BLACKLIST = 1;
-
-	/** @var int */
-	private $mode;
-	/** @var array */
-	private $commandList = [];
+	/** @var string File name of the default config */
+	private const DEFAULT_CONFIG_FILE_NAME = "config.yml";
+	/** @var string File name of the backup that gets created by the automatic config update */
+	private const BACKUP_CONFIG_FILE_NAME = "config_backup_v2.yml";
 
 	public function onEnable() : void {
 		$this->saveDefaultConfig();
 
-		switch ($this->getConfig()->get("mode")) {
-			case "whitelist":
-				$this->mode = self::MODE_WHITELIST;
-				break;
-			case "blacklist":
-				$this->mode = self::MODE_BLACKLIST;
-				break;
-			default:
-				$this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...');
-				return;
+		if ($this->getConfig()->get("version", null) === null) {
+			if (!$this->updateConfig()) {
+				throw new DisablePluginException();
+			}
 		}
 
-		foreach ($this->getConfig()->get("commands") as $command) {
-			// We put the command name in the key so we can use array_intersect_key and array_diff_key
-			$this->commandList[strtolower($command)] = null;
+		$perWorldSettingsEnabled = false;
+		$perWorldSettings = [];
+		try {
+			$defaultSettings = new Settings($this->getConfig()->get("default"));
+			$perWorldConfigs = $this->getConfig()->get("per-world");
+			if ($perWorldConfigs) {
+				$perWorldSettingsEnabled = true;
+				foreach ($perWorldConfigs as $worldName => $perWorldConfig) {
+					$perWorldSettings[$worldName] = new Settings($perWorldConfig);
+				}
+			}
+		} catch (InvalidModeException) {
+			$this->getLogger()->error('Invalid mode selected, must be either "blacklist" or "whitelist"! Disabling...');
+			throw new DisablePluginException();
 		}
 
-		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		if ($perWorldSettingsEnabled) {
+			$this->getServer()->getPluginManager()->registerEvents(new ListenerPerWorld($this, $defaultSettings, $perWorldSettings), $this);
+		} else {
+			$this->getServer()->getPluginManager()->registerEvents(new ListenerDefault($this, $defaultSettings), $this);
+		}
 	}
 
 	/**
-	 * @priority HIGHEST
+	 * @return bool True if the config was updated successfully
 	 */
-	public function onDataPacketSend(DataPacketSendEvent $event) {
-		$packets = $event->getPackets();
-		foreach ($packets as $packet) {
-			if ($packet instanceof AvailableCommandsPacket) {
-				$targets = $event->getTargets();
-				foreach ($targets as $target) {
-					if ($target->getPlayer() !== null) {
-						if ($target->getPlayer()->hasPermission("hidecommands.unhide")) return;
-						if ($this->mode === self::MODE_WHITELIST) {
-							$packet->commandData = array_intersect_key($packet->commandData, $this->commandList);
-						} else {
-							$packet->commandData = array_diff_key($packet->commandData, $this->commandList);
-						}
-					}
-				}
-			}
+	private function updateConfig() : bool {
+		$this->getLogger()->notice("Config version is outdated, updating automatically...");
+		$mode = $this->getConfig()->get("mode", null);
+		if ($mode !== "whitelist" && $mode !== "blacklist") {
+			$this->getLogger()->error("Could not update config file: Mode is invalid!");
+			return false;
 		}
+		$commands = $this->getConfig()->get("commands", null);
+		if ($commands === null) {
+			$this->getLogger()->error("Could not update config file: Commands are missing!");
+			return false;
+		}
+
+		$configPath = Path::join($this->getDataFolder(), self::DEFAULT_CONFIG_FILE_NAME);
+		$configBackupPath = Path::join($this->getDataFolder(), self::BACKUP_CONFIG_FILE_NAME);
+		if (!rename($configPath, $configBackupPath)) {
+			$this->getLogger()->error("Could not update config file: Could not rename config.yml to config_backup_v2.yml");
+			return false;
+		}
+
+		$configResource = $this->getResource(self::DEFAULT_CONFIG_FILE_NAME);
+		$configContent = stream_get_contents($configResource);
+		fclose($configResource);
+		if ($configContent === false) {
+			$this->getLogger()->error("Could not update config file: Could not read new config");
+			return false;
+		}
+
+		$configContent = str_replace('mode: "whitelist"', "mode: \"$mode\"", $configContent);
+
+		$commandsYaml = yaml_emit($commands, YAML_UTF8_ENCODING);
+		$commandsYaml = substr($commandsYaml, 3, -4); // Remove --- and ...
+		$commandsYaml = str_replace("\n", "\n    ", $commandsYaml);
+		$configContent = preg_replace('/commands:.*?##/s', "commands:$commandsYaml\n##", $configContent);
+
+		Filesystem::safeFilePutContents($configPath, $configContent);
+
+		$this->reloadConfig();
+
+		$this->getLogger()->notice("Config version updated successfully!");
+		$this->getLogger()->notice("You can now use the HideCommands per-world feature!");
+		$this->getLogger()->info("A backup of your current configuration has been saved with the name " . self::BACKUP_CONFIG_FILE_NAME);
+		return true;
 	}
 }

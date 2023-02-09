@@ -1,14 +1,48 @@
 ---
 # HideCommands config file:
 
-# Mode can be either "blacklist" or "whitelist"
-# whitelist mode will only show the commands specified below and hide all others
-# blacklist mode will hide the commands specified below and show all others
-mode: "whitelist"
+# Important note: Always use the full command names, not aliases!
+# Hiding a command also hides all its aliases
+# For example: "unban" is an alias of "pardon"
+#   in order to hide the "unban" command,
+#   add "pardon" to the blacklist
 
-# List of commands to whitelist/blacklist (depending on the mode set above)
-commands:
-  - "op"
-  - "gamemode"
-  - "version"
+####################
+# Default settings #
+####################
+
+# These settings apply to all worlds that are not defined below under "per-world"
+default:
+  # Mode can be either "blacklist" or "whitelist"
+  # whitelist mode will only show the commands specified below and hide all others
+  # blacklist mode will hide the commands specified below and show all others
+  mode: "whitelist"
+
+  # List of commands to whitelist/blacklist (depending on the mode set above)
+  commands:
+    - "op"
+    - "gamemode"
+    - "version"
+
+######################
+# Per world settings #
+######################
+
+# These settings overwrite the default settings depending on which world
+# the player is in. Use the world's folder name as the index.
+per-world:
+#  hub:
+#    mode: "blacklist"
+#    commands:
+#      - "myplot"
+#  plots:
+#    mode: "whitelist"
+#    commands:
+#      - "myplot"
+#      - "spawn"
+
+
+# Config version, used internally
+# Do not change this value!
+version: 3
 ...

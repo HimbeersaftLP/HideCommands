@@ -16,8 +16,16 @@ Note: Just because the commands are hidden, doesn't mean they can't be executed.
 2. Start server
 3. Stop server
 4. Edit the config.yml file located in `plugin_data/HideCommands`
+    - Per-world settings:
+        - The settings under `default:` are the default settings for all worlds
+        - The settings under `per-world:` overwrite the default settings
     - Choose whitelist or blacklist mode
+        - whitelist mode will only show the commands specified below and hide all others
+        - blacklist mode will hide the commands specified below and show all others
     - Select the commands to whitelist/blacklist
+        - Always use the full command names, not aliases!
+            - Hiding a command also hides all its aliases
+            - For example: "unban" is an alias of "pardon" in order to hide the "unban" command, add "pardon" to the blacklist
 
 The permission `hidecommands.unhide` allows players to see hidden commands again.
 It has been set to `default: false`, which means you need to explicitly give it to a player or group using a permission manager like [PurePerms](https://poggit.pmmp.io/p/PurePerms/).
