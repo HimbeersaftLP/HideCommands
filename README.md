@@ -20,7 +20,7 @@ Note: Just because the commands are hidden, doesn't mean they can't be executed.
     - Select the commands to whitelist/blacklist
 
 The permission `hidecommands.unhide` allows players to see hidden commands again.
-It has been set to `default: false`, which means you need to explicitly give it to a player or group using a permission manager like [PurePerms](https://poggit.pmmp.io/p/PurePerms/). 
+It has been set to `default: false`, which means you need to explicitly give it to a player or group using a permission manager like [PurePerms](https://poggit.pmmp.io/p/PurePerms/).
 
 ## Additional Information
 
