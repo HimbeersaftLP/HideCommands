@@ -6,7 +6,7 @@
 
 ## Description
 
-A [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) plugin that removes specific commands from the in-game command suggestions.
+A [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) plugin that removes specific commands from the in-game command suggestions. Supports different settings per world.
 
 Note: Just because the commands are hidden, doesn't mean they can't be executed. You still need to make sure to have proper permission management in place.
 

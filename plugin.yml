@@ -15,6 +15,7 @@ mcpe-protocol:
   - 557 # v1.19.40
   - 560 # v1.19.50
   - 567 # v1.19.60
+  - 575 # v1.19.70
 author: Himbeer
 website: himbeer.me
 description: Remove specific commands from the in-game command suggestions.
